@@ -25,8 +25,6 @@ export class User {
 
   constructor(body: user) {
     this.sUserName = body.sUserName;
-    //dcrpyt here
-
     this.sPassword = body.sPassword;
     this.sEmail = body.sEmail;
   }

@@ -1,4 +1,4 @@
-import { Response, Request } from "express";
+import { Request } from "express";
 import { User } from "../models/User.model";
 import { CustomResponse } from "../Responses/Response.message";
 
