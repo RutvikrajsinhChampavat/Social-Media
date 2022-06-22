@@ -2,7 +2,7 @@ import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 
-import user from "../Definitions/user.interface";
+import { user } from "../Definitions/user.interface";
 import { Db } from "mongodb";
 import Database from "../Db";
 
@@ -46,22 +46,20 @@ export class User {
       $or: [{ sUserName: this.sUserName }, { sEmail: this.sEmail }],
     });
 
-    if (!existingUser) {
-      const newUser = await DB.collection("user").insertOne({
-        sUserName: this.sUserName,
-        sPassword: this.sPassword,
-        sEmail: this.sEmail,
-      });
-      return newUser;
-    } else {
-      return "User already exists";
-    }
+    if (existingUser) throw new Error("User already exists !");
+
+    const newUser = await DB.collection("user").insertOne({
+      sUserName: this.sUserName,
+      sPassword: this.sPassword,
+      sEmail: this.sEmail,
+    });
+    return newUser;
   }
 
   public async singIn() {
     const DB = await Database.getdb();
     const existingUser = await DB.collection("user").findOne({
-      sUserName: this.sUserName,
+      $or: [{ sUserName: this.sUserName }, { sEmail: this.sEmail }],
     });
 
     if (existingUser) {
@@ -72,12 +70,14 @@ export class User {
 
         return existingUser;
       } else {
-        return "Check password";
+        throw new Error("Incorrect  password !");
       }
     } else if (!existingUser) {
-      return "user not found";
+      throw new Error(
+        "Sorry, we didn't find any account with that Email id/User Name !"
+      );
     } else {
-      return "error";
+      throw new Error("Something went wrong while signing-in !");
     }
   }
 }
