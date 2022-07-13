@@ -8,6 +8,7 @@ class Database {
   constructor() {
     this.client = new MongoClient(process.env.DB_URLi);
   }
+
   async getdb() {
     const dbClient: MongoClient = await this.client.connect();
     const db: Db = dbClient.db("userData");

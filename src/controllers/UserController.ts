@@ -1,10 +1,10 @@
 import { Response, Request } from "express";
-import { User } from "../models/User.model";
+import { UserModel } from "../models/UserModel";
 
 export default class UserController {
   public async userList(req: Request, res: Response): Promise<any> {
     try {
-      const user = new User(req.body);
+      const user = new UserModel(req.body);
       const userList = await user.singIn();
 
       return res

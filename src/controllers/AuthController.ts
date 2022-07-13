@@ -1,11 +1,12 @@
 import { Request } from "express";
-import { User } from "../models/User.model";
-import { CustomResponse } from "../Responses/Response.message";
+
+import { UserModel } from "../models/UserModel";
+import { CustomResponse } from "../Responses/ResponseMessage";
 
 export default class AuthController {
   public async register(req: Request, res: CustomResponse): Promise<any> {
     try {
-      const user = new User(req.body);
+      const user = new UserModel(req.body);
 
       const newUser = await user.register();
 
@@ -23,7 +24,7 @@ export default class AuthController {
 
   public async signIn(req: Request, res: CustomResponse): Promise<any> {
     try {
-      const user = new User(req.body);
+      const user = new UserModel(req.body);
 
       const loginUser = await user.singIn();
 

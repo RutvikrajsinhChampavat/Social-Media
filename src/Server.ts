@@ -1,8 +1,8 @@
 import express from "express";
 import dotenv from "dotenv";
 
-import authRoutes from "./routes/auth.routes";
-import { CustomResponse } from "./Responses/Response.message";
+import authRoutes from "./routes/AuthRoutes";
+import { CustomResponse } from "./Responses/ResponseMessage";
 
 const app = express();
 dotenv.config();
