@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 
 import { User } from "../Definitions/UserInterface";
 import { Db } from "mongodb";
-import Database from "../Db/Db";
+import Database from "../Db/Database";
 
 dotenv.config();
 

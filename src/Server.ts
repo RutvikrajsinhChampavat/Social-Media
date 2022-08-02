@@ -1,5 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
+import cors from "cors";
 
 import authRoutes from "./routes/AuthRoutes";
 import { CustomResponse } from "./Responses/ResponseMessage";
@@ -9,6 +10,7 @@ dotenv.config();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(cors());
 app.use((_req, res: CustomResponse, next) => {
   res.reply = ({ code, message }, data = {}, header = undefined) => {
     res.status(code).header(header).json({ message, data });

@@ -1,22 +1,17 @@
 import { Request } from "express";
 
-import { UserModel } from "../models/UserModel";
-import { CustomResponse } from "../Responses/ResponseMessage";
+import User from "../models/User";
+import {
+  CustomResponse,
+  customResponseMessages,
+} from "../responses/ResponseMessage";
 
 export default class AuthController {
   public async register(req: Request, res: CustomResponse): Promise<any> {
     try {
-      const user = new UserModel(req.body);
-
-      const newUser = await user.register();
-
-      return res.reply(
-        {
-          code: 200,
-          message: "Congratulations!! You have been registered successfully !",
-        },
-        newUser
-      );
+      const user = new User();
+      const newUser = await user.register(req.body);
+      return res.reply(customResponseMessages["registerationSuccess"], newUser);
     } catch (error) {
       return res.reply({ code: 400, message: error.message }, {});
     }
@@ -24,17 +19,10 @@ export default class AuthController {
 
   public async signIn(req: Request, res: CustomResponse): Promise<any> {
     try {
-      const user = new UserModel(req.body);
+      const user = new User();
+      const token = await user.singIn(req.body);
 
-      const loginUser = await user.singIn();
-
-      return res.reply(
-        {
-          code: 200,
-          message: "Please Check your mail id for confimation code !",
-        },
-        loginUser
-      );
+      return res.reply(customResponseMessages["loginSuccess"], { token });
     } catch (error) {
       return res.reply({ code: 400, message: error.message }, {});
     }
