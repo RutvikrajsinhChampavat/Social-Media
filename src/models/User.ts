@@ -5,77 +5,86 @@ import dotenv from "dotenv";
 import { Collection, Document, ObjectId, Db } from "mongodb";
 import Database from "../db/Database";
 import { User } from "../definitions/UserInterface";
+import { textChangeRangeIsUnchanged } from "typescript";
 
 dotenv.config();
 
+interface register {
+  password: string;
+  userName: string;
+  email: string;
+}
 class UserModel {
-  private id: ObjectId;
+  private _id: ObjectId;
   private userName: string;
   private email: string;
   private password: string;
-  private avatar: string;
-  private token: string;
-  private gender: string;
-  private bio: string;
-  private status: string;
-  private birthDate: string;
-
+  private avatar: string = "";
+  private token: string = "";
+  private gender: string = "";
+  private bio: string = "";
+  private status: string = "";
+  private birthDate: string = "";
+  private createdAt: Date = null;
+  private updatedAt: Date = null;
   constructor() {}
 
   public static encryptPassword(password: string) {
     return bcryptjs.hashSync(password, 10);
   }
-  public async findOneByEmail(email: string) {
+  public static async findOneByEmail(email: string) {
     const Db = await Database.getDb();
     return (await Db.collection("users").findOne({ email: email })) || null;
   }
-  public async save() {
+  public static getToken(input: object) {
+    return jwt.sign(input, process.env.SECRET);
+  }
+
+  public async register(obj: register) {
     const Db = await Database.getDb();
-    if (this?.id) {
-      let data = Object.keys(this)
-        .filter((key) => {
-          if (key != "id") return true;
-        })
-        .reduce((acc, key) => {
-          return { ...acc, [key]: this[key] };
-        }, {});
-      return await Db.collection("users").updateOne(
-        { _id: this.id },
-        { $set: data }
-      );
-    }
-    return await Db.collection("users").insertOne({
+    const createdAt = new Date();
+    delete this._id;
+    const insertObj = {
       ...this,
-    });
-  }
-  public async loadByEmail(email: string) {
-    const userData = await this.findOneByEmail(email);
-    Object.keys(userData).map((key) => {
-      if (key == "_id") return (this["id"] = userData[key]);
-      this[key] = userData[key];
-    });
+      userName: obj.userName,
+      email: obj.email,
+      password: obj.password,
+      createdAt,
+    };
+    try {
+      const { insertedId, acknowledged } = await Db.collection(
+        "users"
+      ).insertOne(insertObj);
+      if (!acknowledged) return false;
+      this._id = insertedId;
+      this.email = obj.email;
+      this.password = obj.password;
+      this.userName = obj.userName;
+      this.createdAt = createdAt;
+    } catch (error) {
+      return false;
+    }
+    return true;
   }
 
-  public async register(obj: User) {
-    this.userName = obj.userName;
-    const existingUser = await this.findOneByEmail(obj.email);
-    if (existingUser) throw new Error("User already exists !");
-    this.email = obj.email;
-    this.password = UserModel.encryptPassword(obj.password);
-    const newUser = await this.save();
-    return newUser;
-  }
-
-  public async singIn(obj: User) {
-    await this.loadByEmail(obj.email);
-    if (!Object.keys(this).length) throw new Error("user not found");
-    if (!(await bcryptjs.compare(obj.password, this.password)))
-      throw new Error("Incorrect login details");
-
-    const token = jwt.sign({ email: this.email }, process.env.SECRET);
-    this.token = token;
-    await this.save();
-    return token;
+  public static async singIn(user: any, token: string) {
+    try {
+      const Db = await Database.getDb();
+      const {
+        acknowledged,
+        modifiedCount,
+        upsertedCount,
+        upsertedId,
+        matchedCount,
+      } = await Db.collection("users").updateOne(
+        { _id: user._id },
+        { $set: { token: token } }
+      );
+      if (!acknowledged) return false;
+    } catch (error) {
+      return false;
+    }
+    return true;
   }
 }
 

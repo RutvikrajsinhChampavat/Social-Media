@@ -2,9 +2,9 @@ import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 
-import { User } from "../Definitions/UserInterface";
+import { User } from "../definitions/UserInterface";
 import { Db } from "mongodb";
-import Database from "../Db/Database";
+import Database from "../db/Database";
 
 dotenv.config();
 

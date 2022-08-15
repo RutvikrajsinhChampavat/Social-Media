@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 
 import authRoutes from "./routes/AuthRoutes";
-import { CustomResponse } from "./Responses/ResponseMessage";
+import { CustomResponse } from "./responses/ResponseMessage";
 
 const app = express();
 dotenv.config();
