@@ -1,51 +1,62 @@
-import { Request } from "express";
+import { NextFunction, Request } from "express";
 import bcryptjs from "bcryptjs";
-
-import User from "../models/User";
+import {
+  ContainerTypes,
+  // Use this as a replacement for express.Request
+  ValidatedRequest,
+  // Extend from this to define a valid schema type/interface
+  ValidatedRequestSchema,
+  // Creates a validator that generates middlewares
+  createValidator
+} from 'express-joi-validation'
+import * as Joi from '@hapi/joi'
+import User from "../models/UserModel";
 import {
   CustomResponse,
-  customResponseMessages,
+  customResponse,
 } from "../responses/ResponseMessage";
+import 'joi-extract-type';
+
+
+
+interface userRegisterRequestSchema extends ValidatedRequestSchema{
+  [ContainerTypes.Body]:{
+    userName:string;
+    email:string;
+    password:string
+  }
+}
+interface userLoginRequestSchema extends ValidatedRequestSchema{
+  [ContainerTypes.Body]:{
+    email:string,
+    password:string
+  }
+}
 
 export default class AuthController {
-  public async register(req: Request, res: CustomResponse): Promise<any> {
+
+  public async register(req: ValidatedRequest<userRegisterRequestSchema>, res: CustomResponse): Promise<any> {
     try {
-      const user = new User();
-      req.body.password = User.encryptPassword(req.body.password);
-      if (await User.findOneByEmail(req.body.email))
-        return res.reply({
-          code: 409,
-          message: "User already exists with email id",
-        });
-      if (!(await user.register(req.body)))
-        res.reply({ code: 500, messge: "User register error. Try Again" });
-      return res.reply(customResponseMessages["registerationSuccess"], user);
+      const register = await User.register(req.body)
+      if(!register) throw new Error()
+      return res.reply(customResponse['REGISTER_SUCCESS']);
     } catch (error) {
-      console.log(error);
-      return res.reply({ code: 500, message: "Server error" });
+      console.log(error)
+      res.reply(customResponse[error.message]||customResponse['SERVER_ERROR'])
     }
   }
 
-  public async signIn(req: Request, res: CustomResponse): Promise<any> {
+  public async login(req: ValidatedRequest<userLoginRequestSchema>, res: CustomResponse): Promise<any> {
     try {
-      const user = await User.findOneByEmail(req.body.email);
-      if (!user)
-        return res.reply({
-          code: 409,
-          message: "User not found",
-        });
-      if (!(await bcryptjs.compare(req.body.password, user.password)))
-        return res.reply({ code: 403, message: "Incorrect login details" });
-      const token = User.getToken({ email: req.body.email });
-      if (!(await User.singIn(user, token)))
-        return res.reply({
-          code: 500,
-          message: "User signIn error. Try Again",
-        });
-      return res.reply(customResponseMessages["loginSuccess"], { token });
+      const loginRes = await User.login(req.body)
+      res.reply(customResponse['LOGIN_SUCCESS'],loginRes)
     } catch (error) {
-      console.log(error);
-      return res.reply({ code: 500, message: "Server error" });
+      console.log(error)
+      res.reply(customResponse[error.message]||customResponse['SERVER_ERROR'])
     }
+  } 
+
+  public async welcome(req:Request,res:CustomResponse):Promise<any>{
+    res.reply({code:200,message:`Welcome you have successfully logged in `})
   }
 }
