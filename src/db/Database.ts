@@ -2,16 +2,18 @@ import dotenv from "dotenv";
 import { MongoClient, Db } from "mongodb";
 
 dotenv.config();
-// singleton class pattern
 class Database {
 
-  private static _instance:MongoClient
+  public static db:Db
+  public static count:number = 0
 
-  static async getInstance():Promise<Db>{
-    if(!this._instance){
-      this._instance = await new MongoClient(process.env.DB_URL).connect()
-    } 
-    return this._instance.db(process.env.DB)
+  static async init(){
+    MongoClient.connect('mongodb://localhost:27017',(err,database)=>{
+      if(err) console.log(err)
+      this.count = this.count +1
+      console.log(this.count)
+      this.db = database.db(process.env.DB)
+    })
   }
 }
 export default Database;

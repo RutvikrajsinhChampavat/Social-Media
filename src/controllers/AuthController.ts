@@ -10,7 +10,7 @@ import {
   createValidator
 } from 'express-joi-validation'
 import * as Joi from '@hapi/joi'
-import User from "../models/UserModel";
+import User from "../models/User";
 import {
   CustomResponse,
   customResponse,
@@ -37,9 +37,9 @@ export default class AuthController {
 
   public async register(req: ValidatedRequest<userRegisterRequestSchema>, res: CustomResponse): Promise<any> {
     try {
-      const register = await User.register(req.body)
-      if(!register) throw new Error()
-      return res.reply(customResponse['REGISTER_SUCCESS']);
+      const {success,code,message,data} = await new User(req.body).register()
+      if(!success) return res.reply({code,message},data)
+      return res.reply(customResponse['REGISTER_SUCCESS'])
     } catch (error) {
       console.log(error)
       res.reply(customResponse[error.message]||customResponse['SERVER_ERROR'])
@@ -48,8 +48,11 @@ export default class AuthController {
 
   public async login(req: ValidatedRequest<userLoginRequestSchema>, res: CustomResponse): Promise<any> {
     try {
-      const loginRes = await User.login(req.body)
-      res.reply(customResponse['LOGIN_SUCCESS'],loginRes)
+
+     const {email,password} = req.body
+      const {success,code,message,data} = await new User(req.body).login()
+      if(!success) console.log('erre') //error
+      return res.reply(customResponse['LOGIN_SUCCESS'],data)
     } catch (error) {
       console.log(error)
       res.reply(customResponse[error.message]||customResponse['SERVER_ERROR'])

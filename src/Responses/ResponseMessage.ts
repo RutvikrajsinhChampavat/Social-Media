@@ -10,7 +10,7 @@ export interface CustomResponse extends Response {
 export const customResponse = {
   ['LOGIN_SUCCESS']: {
     code: 200,
-    message: "Please Check your mail id for confimation code !",
+    message: "Logged in successfully !",
   },
   ['REGISTER_SUCCESS']: {
     code: 200,
