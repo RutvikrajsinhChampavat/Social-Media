@@ -77,7 +77,7 @@ export default class User extends Common{
             return Helper.responseWrap(true,200,'Logged in Successfully.',{token})
 
         } catch (error) {
-
+            return Helper.responseWrap(false,400,'Server Error.')
         }
     }
 }
