@@ -8,12 +8,12 @@ class Database {
   public static count:number = 0
 
   static async init(){
-    MongoClient.connect('mongodb://localhost:27017',(err,database)=>{
-      if(err) console.log(err)
-      this.count = this.count +1
-      console.log(this.count)
-      this.db = database.db(process.env.DB)
-    })
+      MongoClient.connect('mongodb://localhost:27017',(err,database)=>{
+        console.log('error',err)
+        this.count = this.count +1
+        console.log(this.count)
+        this.db = database?.db(process.env.DB)
+      })
   }
 }
 export default Database;

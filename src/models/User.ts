@@ -17,7 +17,7 @@ export default class User extends Common{
     public bio: string | null | undefined = undefined;
     public status: string | null | undefined = undefined;
     public birthDate: string | null | undefined = undefined;
-    public collection: any = Database.db.collection('users')
+    public collection: any = Database.db?.collection('users')
 
     constructor(userObj?:any){
         super()
@@ -26,7 +26,7 @@ export default class User extends Common{
         }
     }
 
-    public static createToken(user:User){
+    public static createToken(user:User):string{
         try {
             delete user.collection
             return  jwt.sign({ sub:user.userName, user},process.env.SECRET,{ expiresIn:process.env.EXPIRESIN})
@@ -47,11 +47,12 @@ export default class User extends Common{
     public async register(){
         try {
             let {userName,email,password} = this
+            this.createdAt = new Date()
             password = Helper.hashPassword(password)
             const user = await this.collection.findOne({email:this.email})
             if(user) return Helper.responseWrap(false,403,'User already exists with this email.')
-            const registeredUser = await this.collection.insertOne({userName,email,password})
-            if(!registeredUser) return Helper.responseWrap(false,400,'Server Error.')
+            const registeredUser = await this.collection.insertOne({userName,email,password,createdAt:this.createdAt})
+            if(!registeredUser) throw new Error()
             return Helper.responseWrap(true,200,'Registered Successfully.')
         } catch (error) {
             return Helper.responseWrap(false,400,'Server Error.')
@@ -60,20 +61,15 @@ export default class User extends Common{
 
     public async login(){
         try {
-            // this.collection.findOne
-            /*
-
-            */
            const {email,password} = this
             const userRes = await this.collection.findOne({email})
-            console.log(userRes,'fsfs')
-            if(!userRes) console.log('error') //error
-            if(!Helper.comparePassword(password,userRes.password)) console.log('helllo') ; // error
+            if(!userRes) return Helper.responseWrap(false,404,"Sorry, we didn't find any account with that Email id")
+            if(!Helper.comparePassword(password,userRes.password)) return Helper.responseWrap(false,401,'Incorrect login details.')
+            delete userRes.token
             const user = Helper.getUser(userRes)
-            console.log(user)
             const token = User.createToken(user)
             const updatedUser = await this.collection.updateOne({_id:user._id},{$set:{token}})
-            if(!updatedUser) console.log('error')//error
+            if(!updatedUser) throw new Error()
             return Helper.responseWrap(true,200,'Logged in Successfully.',{token})
 
         } catch (error) {
