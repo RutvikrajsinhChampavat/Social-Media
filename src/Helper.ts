@@ -12,7 +12,7 @@ export class Helper{
     public static hashPassword(password:string):string{
         return bcryptjs.hashSync(password,10)
     } 
-    public static responseWrap(success:boolean,code:number,message:string='',data:any={}){
+    public static responseWrap(success:boolean,code:number=0,message:string='',data:any={}){
         return{ success:success,code:code,message:message,data:data }
     }
     public static getUser(user){

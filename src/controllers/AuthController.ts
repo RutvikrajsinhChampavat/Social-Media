@@ -12,9 +12,9 @@ import {
 import * as Joi from '@hapi/joi'
 import User from "../models/User";
 import {
-  CustomResponse,
   customResponse,
 } from "../responses/ResponseMessage";
+import { CustomResponse } from "../definitions/interface";
 import 'joi-extract-type';
 
 
@@ -35,31 +35,29 @@ interface userLoginRequestSchema extends ValidatedRequestSchema{
 
 export default class AuthController {
 
-  public async register(req: ValidatedRequest<userRegisterRequestSchema>, res: CustomResponse): Promise<any> {
+  public async register(req: ValidatedRequest<userRegisterRequestSchema>, res: any): Promise<any> {
     try {
       const {success,code,message,data} = await new User(req.body).register()
-      if(!success) return res.reply({code,message},data)
-      return res.reply(customResponse['REGISTER_SUCCESS'])
+      return res.reply({code,message},data)
     } catch (error) {
       console.log(error)
-      res.reply(customResponse[error.message]||customResponse['SERVER_ERROR'])
+      res.reply(customResponse['SERVER_ERROR'])
     }
   }
 
-  public async login(req: ValidatedRequest<userLoginRequestSchema>, res: CustomResponse): Promise<any> {
+  public async login(req: ValidatedRequest<userLoginRequestSchema>, res:any): Promise<any> {
     try {
 
      const {email,password} = req.body
       const {success,code,message,data} = await new User(req.body).login()
-      if(!success) console.log('erre') //error
-      return res.reply(customResponse['LOGIN_SUCCESS'],data)
+      return res.reply({code,message},data)
     } catch (error) {
       console.log(error)
-      res.reply(customResponse[error.message]||customResponse['SERVER_ERROR'])
+      res.reply(customResponse['SERVER_ERROR'])
     }
   } 
 
-  public async welcome(req:Request,res:CustomResponse):Promise<any>{
+  public async welcome(req:Request,res:any):Promise<any>{
     res.reply({code:200,message:`Welcome you have successfully logged in `})
   }
 }

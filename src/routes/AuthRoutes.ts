@@ -1,5 +1,5 @@
 import * as Joi from '@hapi/joi'
-import {userExists,validator,isAuthenticated} from "../middlewares";
+import {validator,isAuthenticated} from "../middlewares";
 import {createValidator} from 'express-joi-validation'
 import { Router } from "express";
 import AuthController from "../controllers/AuthController";

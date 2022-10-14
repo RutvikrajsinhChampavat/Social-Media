@@ -9,11 +9,9 @@ type status = {
   code:number
   message:string
 }
-export interface CustomResponse extends Response {
+interface CustomResponse extends Response {
   reply(status: status, data?: any,header?:any): any;
 }
-// import { CustomResponse } from "./responses/ResponseMessage";
-
 const app = express();
 dotenv.config();
 Database.init()
@@ -21,9 +19,7 @@ Database.init()
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());
-// app.use('/',async (req,res)=>{
-//   console.log( await Database.db.collection('users').insertOne({name:'tarak'}))
-// })
+
 app.use((_req, res: CustomResponse, next) => {
   res.reply = ({ code, message }, data = {}, header = undefined) => {
     res.status(code).header(header).json({ message, data });
@@ -35,9 +31,9 @@ app.use((req,res,next)=>{
   next()
 })
 app.use("/api/v1/auth", authRoutes);
-//  app.use((err,req,res,next)=>{
-//   res.reply({code:500,message:err.message})
-//  })
+ app.use((err,req,res,next)=>{
+  res.reply({code:500,message:err.message})
+ })
 
 const PORT = process.env.PORT;
 

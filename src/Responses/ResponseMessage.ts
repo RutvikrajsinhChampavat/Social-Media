@@ -1,11 +1,5 @@
-import { Response } from "express";
-type status = {
-  code:number
-  message:string
-}
-export interface CustomResponse extends Response {
-  reply(status: status, data?: any,header?:any): any;
-}
+
+
 
 export const customResponse = {
   ['LOGIN_SUCCESS']: {
@@ -26,3 +20,7 @@ export const customResponse = {
   },
   ['SERVER_ERROR']:{ code: 500, message: "Server error" }
 };
+
+export const messages ={
+  ['LOGIN_SUCCESS']:'Logged in successfully !',
+} 
