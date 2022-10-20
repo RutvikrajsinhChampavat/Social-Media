@@ -1,18 +1,8 @@
 import { Db } from "mongodb";
 
-class Collection{
-    private db:Db
-    private collectionName
-    constructor(name){
-        this.collectionName = name
+export default class Collection{
+    public static users:any
+    public static init(db:Db|undefined){
+        this.users = db?.collection('users') 
     }
-    public async findOne(){
-        await this.db.collection(this.collectionName).findOne()
-    }
-    public async insertOne(doc,options?){
-        let createdAt = new Date()
-        doc = {...doc,createdAt}
-        return await this.db.collection(this.collectionName).insertOne(doc,options)
-    }   
-
 }

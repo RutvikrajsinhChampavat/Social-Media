@@ -4,6 +4,7 @@ import cors from "cors";
 import authRoutes from "./routes/AuthRoutes";
 import { Response } from "express";
 import Database from './db/Database'
+import { customResponse } from "./responses/ResponseMessage";
 
 type status = {
   code:number
@@ -32,7 +33,7 @@ app.use((req,res,next)=>{
 })
 app.use("/api/v1/auth", authRoutes);
  app.use((err,req,res,next)=>{
-  res.reply({code:500,message:err.message})
+  res.reply(customResponse['SERVER_ERROR'])
  })
 
 const PORT = process.env.PORT;

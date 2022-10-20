@@ -3,9 +3,8 @@ import Database from "../db/Database"
 import { Helper } from "../Helper"
 
 export abstract class Common{
-
-    public _id:ObjectId | null | undefined = undefined
-    public createdAt : Date | null | undefined = undefined
-    public updatedAt : Date | null | undefined = undefined
+    protected _id:ObjectId | null | undefined 
+    protected createdAt : Date | null | undefined 
+    protected updatedAt : Date | null | undefined 
 }
 

@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
 import { MongoClient, Db } from "mongodb";
+import Collection from './Collection'
 
 dotenv.config();
 class Database {
@@ -9,10 +10,10 @@ class Database {
 
   static async init(){
       MongoClient.connect('mongodb://localhost:27017',(err,database)=>{
-        console.log('error',err)
-        this.count = this.count +1
-        console.log(this.count)
+        // this.count = this.count +1 //single connection
+        // console.log(this.count)
         this.db = database?.db(process.env.DB)
+        Collection.init(this.db)
       })
   }
 }

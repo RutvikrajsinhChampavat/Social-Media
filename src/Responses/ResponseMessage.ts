@@ -18,9 +18,9 @@ export const customResponse = {
     code:409,
     message: "User not found"
   },
-  ['SERVER_ERROR']:{ code: 500, message: "Server error" }
+  ['SERVER_ERROR']:{ code: 500, message: "Server error" },
+  ['INVALID_USER_CRED']:{ code: 500, message: "Invalid user credentials" },
+  ['LOGIN_ERROR']:{ code: 500, message: "Login error." },
+  ['REGISTER_ERROR']:{ code: 500, message: "Register error." },
+  ['TOKEN_REQUIRED']:{ code: 500, message: "Auth token not found." },
 };
-
-export const messages ={
-  ['LOGIN_SUCCESS']:'Logged in successfully !',
-} 

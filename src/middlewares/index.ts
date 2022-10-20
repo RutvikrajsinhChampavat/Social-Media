@@ -1,13 +1,11 @@
 import Database from "../db/Database";
 import { NextFunction, Request } from "express";
-import * as Joi from '@hapi/joi'
 import jwt from "jsonwebtoken";
-
 
 import {
     customResponse,
   } from "../responses/ResponseMessage";
-import { Helper } from "../Helper";
+import User from "../models/User";
 
 export const validator = (schema) =>{
     return (req:Request,res:any,next:NextFunction)=>{
@@ -24,13 +22,12 @@ export const validator = (schema) =>{
 export const isAuthenticated = async(req:any,res:any,next:NextFunction)=>{
     try {
         const token = req.header('Authorization')?.replace('Bearer ','')
-        if(!token) res.reply(customResponse["SERVER_ERROR"])
-        if(!jwt.verify(token,process.env.SECRET)) return
-        const user = await Database.db.collection('users').findOne({token})
-
-        let userObj = Helper.getUser(user)
-        console.log(userObj)
-        if(user) req.user = user
+        if(!token) return res.reply(customResponse['TOKEN_REQUIRED'])
+        let payload = jwt.verify(token,process.env.SECRET)
+        if(!payload) return res.reply({})
+        const user = await Database.db.collection('users').findOne({$and:[{email:payload.sub},{token}]})
+        if(!user) return res.reply({}) 
+        req.user = new User(user)
         next()
     } catch (error) {
         next(error)

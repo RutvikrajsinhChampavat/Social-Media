@@ -13,7 +13,7 @@ const userLoginBodySchema = Joi.object().keys({
     password:Joi.string().required(),
     email:Joi.string().required()
 })
-router.post("/register", new AuthController().register);
-router.post("/login", new AuthController().login);
-// router.get('/welcome',isAuthenticated,new AuthController().welcome)
+router.post("/register",validator(userRegisterBodySchema), new AuthController().register);
+router.post("/login",validator(userLoginBodySchema),new AuthController().login);
+router.get("/logout",isAuthenticated, new AuthController().logout);
 export default router;
