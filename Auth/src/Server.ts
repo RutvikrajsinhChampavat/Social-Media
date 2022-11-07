@@ -32,6 +32,9 @@ app.use((req,res,next)=>{
   next()
 })
 app.use("/api/v1/auth", authRoutes);
+app.get('/hello',(req,res)=>{
+  res.send('hello there...')
+})
  app.use((err,req,res,next)=>{
   res.reply(customResponse['SERVER_ERROR'])
  })
