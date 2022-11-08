@@ -9,4 +9,7 @@ export class Helper{
         })
         return target
     }
+    public static slugify(text:string):string{
+        return text
+    }
 } 

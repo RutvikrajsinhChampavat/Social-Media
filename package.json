@@ -28,7 +28,6 @@
     "express-joi-validation": "^5.0.1",
     "express-jwt": "^7.7.5",
     "joi": "^17.6.0",
-    "joi-extract-type": "0.0.6",
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^4.7.0",
     "mongoose": "^6.3.5",

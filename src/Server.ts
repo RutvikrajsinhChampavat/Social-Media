@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import authRoutes from "./routes/AuthRoutes";
+import postRoutes from "./routes/PostRoutes"
 import { Response } from "express";
 import Database from './db/Database'
 import { customResponse } from "./responses/ResponseMessage";
@@ -16,6 +17,7 @@ interface CustomResponse extends Response {
 const app = express();
 dotenv.config();
 Database.init()
+console.log(process.env.MONGODB_CONNSTRING)
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -32,12 +34,13 @@ app.use((req,res,next)=>{
   next()
 })
 app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/post",postRoutes);
 app.get('/hello',(req,res)=>{
   res.send('hello there...')
 })
- app.use((err,req,res,next)=>{
+app.use((err,req,res,next)=>{
   res.reply(customResponse['SERVER_ERROR'])
- })
+})
 
 const PORT = process.env.PORT;
 

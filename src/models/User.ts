@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import { Helper } from "../Helper";
 import { Common } from "./Common";
 import Database from "../db/Database";
-import Collection from "../db/Collection";
+import Collections from "../db/Collections";
 
 export default class User extends Common{
     private userName:string|null|undefined
@@ -14,7 +14,8 @@ export default class User extends Common{
     private email:string
     private password: string
     private posts!:Array<any>
-    constructor(obj:any){
+
+    constructor(obj?:any){
         super()
         this._id = obj._id
         this.email = obj.email 
@@ -23,10 +24,11 @@ export default class User extends Common{
         this.createdAt = obj.createdAt
         this.updatedAt = obj.updatedAt
     }
+    
     public async login(){
         try {
             this.token = jwt.sign({ sub:this.email},'secret',{expiresIn:'24h'})
-            await Collection.users.updateOne({_id:this._id},{$set:{token:this.token}})
+            await Collections.users.updateOne({_id:this._id},{$set:{token:this.token}})
             return this
         } catch (error) {
             throw new Error('Login error.')
@@ -35,7 +37,7 @@ export default class User extends Common{
     public async logout(){
         try {
             this.token = ''
-            await Collection.users.updateOne({_id:this._id},{$set:{token:this.token}})
+            await Collections.users.updateOne({_id:this._id},{$set:{token:this.token}})
             return this
         } catch (error) {
             throw new Error('Logout error.')
