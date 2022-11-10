@@ -1,6 +1,3 @@
-
-
-
 export const customResponse = {
   ['LOGIN_SUCCESS']: {
     code: 200,
@@ -19,10 +16,12 @@ export const customResponse = {
     message: "User not found"
   },
   ['POST_CREATE_ERROR']:{code:500,message:"Post create error"},
-  ['POST_CREATE_SUCCESS']:{code:500,message:"Post created successfully"},
+  ['POST_CREATE_SUCCESS']:{code:200,message:"Post created successfully"},
   ['SERVER_ERROR']:{ code: 500, message: "Server error" },
   ['INVALID_USER_CRED']:{ code: 500, message: "Invalid user credentials" },
   ['LOGIN_ERROR']:{ code: 500, message: "Login error." },
   ['REGISTER_ERROR']:{ code: 500, message: "Register error." },
   ['TOKEN_REQUIRED']:{ code: 500, message: "Auth token not found." },
+  ['POST_EDIT_SUCCESS']:{ code: 200, message: "Post edited successfully." },
+  ['POST_EDIT_ERROR']:{ code: 500, message: "Post edit error." },
 };

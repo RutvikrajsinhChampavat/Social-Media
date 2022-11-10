@@ -7,6 +7,8 @@ import {
   } from "../responses/ResponseMessage";
 import User from "../models/User";
 
+
+
 export const validator = (schema) =>{
     return (req:Request,res:any,next:NextFunction)=>{
         try {
@@ -19,7 +21,7 @@ export const validator = (schema) =>{
     }
 }
 
-export const isAuthenticated = async(req:any,res:any,next:NextFunction)=>{
+export const isAuthenticated = async(req:Request,res:any,next:NextFunction)=>{
     try {
         const token = req.header('Authorization')?.replace('Bearer ','')
         if(!token) return res.reply(customResponse['TOKEN_REQUIRED'])

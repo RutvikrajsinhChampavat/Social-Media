@@ -12,5 +12,6 @@ const userLoginBodySchema = Joi.object().keys({
     password:Joi.string().required(),
     email:Joi.string().required()
 })
-router.post("/create",new PostController().create);
+router.post("/create",isAuthenticated,new PostController().create);
+router.post("/edit/:id",isAuthenticated,new PostController().edit);
 export default router;

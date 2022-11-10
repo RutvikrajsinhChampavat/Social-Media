@@ -1,4 +1,4 @@
-import express from "express";
+import express, { NextFunction } from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import authRoutes from "./routes/AuthRoutes";
@@ -6,24 +6,33 @@ import postRoutes from "./routes/PostRoutes"
 import { Response } from "express";
 import Database from './db/Database'
 import { customResponse } from "./responses/ResponseMessage";
+import User from "./models/User";
 
 type status = {
   code:number
   message:string
 }
-interface CustomResponse extends Response {
-  reply(status: status, data?: any,header?:any): any;
+
+declare global {
+  namespace Express {
+    interface Request {
+      user?:User
+    }
+    interface Response{
+      reply(status:status,data?:any,header?:any):any
+    }
+  }
 }
+
 const app = express();
 dotenv.config();
 Database.init()
-console.log(process.env.MONGODB_CONNSTRING)
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 
-app.use((_req, res: CustomResponse, next) => {
+app.use((_req, res: Response, next) => {
   res.reply = ({ code, message }, data = {}, header = undefined) => {
     res.status(code).header(header).json({ message, data });
   };
@@ -33,12 +42,11 @@ app.use((req,res,next)=>{
   console.log(`${req.method} url::${req.url}`)
   next()
 })
+
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/post",postRoutes);
-app.get('/hello',(req,res)=>{
-  res.send('hello there...')
-})
-app.use((err,req,res,next)=>{
+
+app.use((err:Error,_req:any,res:Response,next:NextFunction)=>{
   res.reply(customResponse['SERVER_ERROR'])
 })
 

@@ -25,6 +25,10 @@ export default class User extends Common{
         this.updatedAt = obj.updatedAt
     }
     
+    get id(){
+        return this._id
+    }
+    
     public async login(){
         try {
             this.token = jwt.sign({ sub:this.email},'secret',{expiresIn:'24h'})

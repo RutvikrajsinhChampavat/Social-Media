@@ -2,7 +2,6 @@ import { Common } from "./Common";
 import { Collection, Db, ObjectId } from "mongodb"
 import { Helper } from "../Helper";
 import Collections from "../db/Collections";
-import { trace } from "joi";
 
 export default class Post extends Common{
     private title:string|null|undefined
@@ -67,13 +66,8 @@ export default class Post extends Common{
         try {
             await Collections.post.delete({_id:this._id})
         } catch (error) {
-            
+            throw new Error()
         }
     }
 
 }
-/*
- * create post obj validate
- * new post(obj)
- *  
- */

@@ -1,1 +1,0 @@
-{"version":3,"file":"Collection.js","sourceRoot":"","sources":["../../src/db/Collection.ts"],"names":[],"mappings":";;AAEA,MAAqB,UAAU;IAEpB,MAAM,CAAC,IAAI,CAAC,EAAe;QAC9B,IAAI,CAAC,KAAK,GAAG,EAAE,aAAF,EAAE,uBAAF,EAAE,CAAE,UAAU,CAAC,OAAO,CAAC,CAAA;IACxC,CAAC;CACJ;AALD,6BAKC"}

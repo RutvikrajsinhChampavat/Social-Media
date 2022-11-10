@@ -3,28 +3,15 @@ import bcryptjs from "bcryptjs";
 import User from "../models/User";
 import Collections from "../db/Collections";
 import { customResponse } from "../responses/ResponseMessage";
-
-
-
-interface loginParams{
-  email:string,
-  password:string
-}
-interface registerParams{
-  email:string,
-  password:string,
-  userName:string
-}
-type loginRequest = Request&{body:loginParams}
-type registerRequest = Request&{body:registerParams}
+import { loginRequest,registerRequest } from "../definitions/types";
 
 export default class AuthController {
 
-  public async register(req: registerRequest, res: any): Promise<any> {
+  public async register(req: registerRequest, res: Response): Promise<any> {
     try {
       let {email,password,userName} = req.body
       const userNameExists = await Collections.users.findOne({userName}) 
-      const userEmailExists = await Collections.users.findOne({email})   
+      const userEmailExists = await Collections.users.findOne({email})    
       if(userNameExists) return res.reply({code:400,message:'User name taken.'})
       if(userEmailExists) return res.reply({code:400,message:'User already exists.'})
       password = bcryptjs.hashSync(password,10)

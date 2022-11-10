@@ -11,5 +11,11 @@ export class Helper{
     }
     public static slugify(text:string):string{
         return text
+            .trim()
+            .toLowerCase()
+            .split(' ')
+            .filter(ele => ele || null)
+            .join('-')
+            .replace(/[/\\?&%*|"<>(){}\s]/g, '-');        
     }
-} 
+}
