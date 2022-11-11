@@ -2,12 +2,13 @@ import { Common } from "./Common";
 import { Collection, Db, ObjectId } from "mongodb"
 import { Helper } from "../Helper";
 import Collections from "../db/Collections";
+import RedisProvider from "../db/Redis";
 
 export default class Post extends Common{
     private title:string|null|undefined
     private slug:string
     private body:string
-    private userId:ObjectId
+    private userId:ObjectId|null|undefined
     private company:string
     private tags:[string]
     private userName:string
@@ -16,17 +17,21 @@ export default class Post extends Common{
     constructor(obj:any);
     constructor(obj?:any){
         super()
-        this._id = obj._id
-        this.body = obj.title 
-        this.title = obj.body
-        this.userId = obj.userId
-        this.company = obj.company
-        this.tags = obj.tags
-        this.slug = obj.slug
+        this._id = obj?._id
+        this.body = obj?.title 
+        this.title = obj?.body
+        this.userId = obj?.userId
+        this.company = obj?.company
+        this.tags = obj?.tags
+        this.userName = obj?.userName
     }
 
     setId(id:ObjectId){
         this._id = id
+        return this
+    }
+    setUserId(id:ObjectId){
+        this.userId = id
         return this
     }
 
@@ -42,7 +47,9 @@ export default class Post extends Common{
             slug
         }
         try {
-            await Collections.post.insertOne(insetObj)
+            const {insertedId} = await Collections.post.insertOne(insetObj)
+            await RedisProvider.client.zadd("likes",0,insertedId)
+            await RedisProvider.client.zadd("comments",0,insertedId)
         } catch (error) {
             throw new Error('Post create error.')
         }
@@ -64,8 +71,10 @@ export default class Post extends Common{
 
     async delete(){
         try {
-            await Collections.post.delete({_id:this._id})
+            console.log(this.userId,this._id)
+            await Collections.post.deleteOne({_id:this._id,userId:this.userId})
         } catch (error) {
+            console.log(error)
             throw new Error()
         }
     }

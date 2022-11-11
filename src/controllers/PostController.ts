@@ -4,25 +4,27 @@ import { Response,Request } from "express";
 import { ObjectId } from "mongodb";
 
 export default class PostController{
-    public async create(req:any,res:any){
+    public async create(req:Request,res:Response){
         try {
-            let userID = req.user.id
+            let userId = req.user.Id
+            let userName = req.user.UserName
             let {title,body,company,tags} = req.body
             const obj = {
                 title,
                 body,
                 company,
                 tags,
-                userID
+                userId,
+                userName
             }
-            await new Post(req.body).create()
+            await new Post(obj).create()
             return res.reply(customResponse['POST_CREATE_SUCCESS'])
         } catch (error) {
             return res.reply(customResponse["POST_CREATE_ERROR"])
         }
     }
 
-    public async edit(req:any,res:any){
+    public async edit(req:Request,res:Response){
         try {
             const {id} = req.params
             const post = new Post().setId(new ObjectId(id))
@@ -33,13 +35,21 @@ export default class PostController{
         }
     }
 
-    public async delete(req:any,res:any){
+    public async delete(req:Request,res:Response){
         try {
-            let {id} = req.params
-            await new Post().setId(new ObjectId(id)).delete()
+            const {id} = req.params
+            await new Post().setId(new ObjectId(id)).setUserId(req.user.Id).delete()
             return res.reply(customResponse["POST_DELETE_SUCCESS"])
         } catch (error) {
             return res.reply(customResponse["POST_DELETE_ERROR"])
         }
+    }
+
+    public async getPost(){
+
+    }
+
+    public async getPosts(req:Request,res:Response){
+        let {} = req.body
     }
 }

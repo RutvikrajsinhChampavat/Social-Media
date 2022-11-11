@@ -24,4 +24,6 @@ export const customResponse = {
   ['TOKEN_REQUIRED']:{ code: 500, message: "Auth token not found." },
   ['POST_EDIT_SUCCESS']:{ code: 200, message: "Post edited successfully." },
   ['POST_EDIT_ERROR']:{ code: 500, message: "Post edit error." },
+  ['POST_DELETE_SUCCESS']:{ code: 500, message: "Post deleted successfully." },
+  ['POST_DELETE_ERROR']:{ code: 500, message: "Post delete error." },
 };

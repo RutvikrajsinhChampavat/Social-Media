@@ -1,4 +1,4 @@
-import { NextFunction, Request } from "express";
+import { NextFunction, Request,Response } from "express";
 import bcryptjs from "bcryptjs";
 import User from "../models/User";
 import Collections from "../db/Collections";
@@ -7,7 +7,7 @@ import { loginRequest,registerRequest } from "../definitions/types";
 
 export default class AuthController {
 
-  public async register(req: registerRequest, res: Response): Promise<any> {
+  public async register(req: Request, res: Response):Promise<any>{
     try {
       let {email,password,userName} = req.body
       const userNameExists = await Collections.users.findOne({userName}) 
@@ -23,7 +23,7 @@ export default class AuthController {
     }
   }
 
-  public async login(req:loginRequest,res:any): Promise<any> {
+  public async login(req:Request,res:Response): Promise<any> {
     try {
       const {email,password} = req.body
       const data = await Collections.users.findOne({email})
@@ -36,12 +36,12 @@ export default class AuthController {
     }
   }
   
-  public async logout(req:any,res:any):Promise<any>{
+  public async logout(req:Request,res:Response):Promise<any>{
     try {
       await req.user.logout()
       res.reply({code:200,message:"Logged out successfully"})
     } catch (error) {
-      res.reply()
+      res.reply({code:500,message:"Logged out Error"})
     }
   }
 

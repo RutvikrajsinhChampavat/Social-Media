@@ -1,4 +1,5 @@
 import express, { NextFunction } from "express";
+import http from 'http'
 import dotenv from "dotenv";
 import cors from "cors";
 import authRoutes from "./routes/AuthRoutes";
@@ -7,6 +8,10 @@ import { Response } from "express";
 import Database from './db/Database'
 import { customResponse } from "./responses/ResponseMessage";
 import User from "./models/User";
+import Redis from "./db/Redis";
+import { Server } from "socket.io"
+import Socket from './socket/Socket'
+
 
 type status = {
   code:number
@@ -25,8 +30,13 @@ declare global {
 }
 
 const app = express();
+const server = http.createServer(app) 
+
+
 dotenv.config();
 Database.init()
+Redis.init()
+Socket.init(server)
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -46,10 +56,11 @@ app.use((req,res,next)=>{
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/post",postRoutes);
 
-app.use((err:Error,_req:any,res:Response,next:NextFunction)=>{
+app.use((err:Error,_req:any,res:any,next:NextFunction)=>{
+  console.log('erj',err)
   res.reply(customResponse['SERVER_ERROR'])
 })
 
 const PORT = process.env.PORT;
 
-app.listen(PORT, () => console.log(`Server up and running on ${PORT}`));
+server.listen(PORT, () => console.log(`Server up and running on ${PORT}`));
