@@ -42,7 +42,6 @@ export default class Socket{
             })
             socket.on('isLiked',async(postId:any,userId:any,callback:any)=>{
                 const score  = await RedisProvider.client.zscore(`liked:${postId}`,userId)
-                console.log(Boolean(score),'ererj')
                 callback(Boolean(score))
             })
         })

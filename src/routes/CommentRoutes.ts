@@ -9,6 +9,7 @@ const commentAddSchema = Joi.object().keys({
     message:Joi.string().required()
 })
 router.post("/add",isAuthenticated,validator(commentAddSchema),new CommentController().add);
+router.get("/post/:id",new CommentController().getComments);
 // router.get("/delete/:id",isAuthenticated,new CommentController().delete);
 
 export default router

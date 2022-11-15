@@ -19,6 +19,15 @@ export default class CommentController{
             return res.reply(customResponse["COMMENT_ADD_ERROR"])
         }
     }
+    public async getComments(req:Request,res:Response){
+        try {
+            const {id} = req.params
+            const comments = await new Comment().setParentId(new ObjectId(id)).getCommentsByParentId()
+            return res.reply(customResponse['COMMENTS_FETCH_SUCCESS'],comments)
+        } catch (error) {
+            return res.reply(customResponse["COMMENTS_FETCH_ERROR"])
+        }
+    }
     public async delete(req:Request,res:Response){
         try {
             const {commentId} = req.params

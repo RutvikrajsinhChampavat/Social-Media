@@ -54,7 +54,11 @@ export default class PostController{
 
     public async getPosts(req:Request,res:Response){
         try {
-            const posts = await Post.getAll()
+            const {userId} = req.body
+            console.log(userId,'hjfsl')
+            const post = new Post()
+            if(userId) post.setUserId(userId)
+           const posts = await post.getAll()
             return res.reply(customResponse['FETCH_POSTS_SUCCESS'],posts)
         } catch (error) {
             console.log(error)

@@ -35,4 +35,6 @@ export const customResponse = {
   ['FETCH_POST_SUCCESS']:{ code: 200, message: "Post fetched successfully." },
   ['FETCH_POST_ERROR']:{ code: 500, message: "Post fetch error." },
   ['INVALID_TOKEN']:{ code: 500, message: "Invalid token" },
+  ['COMMENTS_FETCH_SUCCESS']:{ code: 200, message: "Comments fetched successfully." },
+  ['COMMENTS_FETCH_ERROR']:{ code: 500, message: "Comments fetch error." },
 };

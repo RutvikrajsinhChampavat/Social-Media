@@ -125,7 +125,7 @@ export default class Post extends Common{
         }
     }
     
-    static async getAll(){
+    async getAll(){
         try {
             const postlist = []
             const posts =  await Collections.post.aggregate([
@@ -153,7 +153,8 @@ export default class Post extends Common{
                     ...post,
                     likes:await RedisProvider.client.zscore('likes',post._id),
                     views:await RedisProvider.client.zscore('views',post._id),
-                    comments:await RedisProvider.client.zscore('comments',post._id)
+                    comments:await RedisProvider.client.zscore('comments',post._id),
+                    isLiked:this.userId?Boolean(await RedisProvider.client.zscore(`liked:${post._id}`,String(this.userId))):false
                 }
                 postlist.push(newPost)
             };

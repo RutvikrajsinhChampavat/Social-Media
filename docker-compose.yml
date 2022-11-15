@@ -17,4 +17,4 @@ services:
       - MONGODB_CONNSTRING=mongodb://root:root@mogodb-server
     ports:
       - "8080:3009"
-    
+   
