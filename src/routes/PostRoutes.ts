@@ -15,4 +15,6 @@ const userLoginBodySchema = Joi.object().keys({
 router.post("/create",isAuthenticated,new PostController().create);
 router.post("/edit/:id",isAuthenticated,new PostController().edit);
 router.get("/delete/:id",isAuthenticated,new PostController().delete);
+router.get("/:id",new PostController().getPost);
+router.post("/",new PostController().getPosts);
 export default router;

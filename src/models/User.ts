@@ -13,6 +13,7 @@ export default class User extends Common{
     private status:string
     private email:string
     private password: string
+    private company:string
     private posts!:Array<any>
 
     constructor(obj?:any){
@@ -21,8 +22,10 @@ export default class User extends Common{
         this.email = obj.email 
         this.userName = obj.userName 
         this.password = obj.password
+        this.company = obj.company  
         this.createdAt = obj.createdAt
         this.updatedAt = obj.updatedAt
+        this.token = obj.token
     }
     
     get Id(){

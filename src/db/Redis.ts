@@ -4,6 +4,6 @@ export default class RedisProvider{
     public static client:Redis
 
     static async init(){
-       this.client = new Redis()
+            this.client = new Redis()
     }
 }

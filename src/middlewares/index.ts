@@ -1,6 +1,6 @@
-import Database from "../db/Database";
 import { NextFunction, Request } from "express";
 import jwt from "jsonwebtoken";
+import Collections from "../db/Collections";
 
 import {
     customResponse,
@@ -26,9 +26,9 @@ export const isAuthenticated = async(req:Request,res:any,next:NextFunction)=>{
         const token = req.header('Authorization')?.replace('Bearer ','')
         if(!token) return res.reply(customResponse['TOKEN_REQUIRED'])
         let payload = jwt.verify(token,process.env.SECRET)
-        if(!payload) return res.reply({})
-        const user = await Database.db.collection('users').findOne({$and:[{email:payload.sub},{token}]})
-        if(!user) return res.reply({}) 
+        if(!payload) return res.reply(customResponse["INVALID_TOKEN"])
+        const user = await Collections.users.findOne({ email:payload.sub,token:token})
+        if(!user) return res.reply(customResponse["USER_NOT_FOUND"]) 
         req.user = new User(user)
         next()
     } catch (error) {

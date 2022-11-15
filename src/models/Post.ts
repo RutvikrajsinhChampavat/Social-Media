@@ -9,9 +9,7 @@ export default class Post extends Common{
     private slug:string
     private body:string
     private userId:ObjectId|null|undefined
-    private company:string
     private tags:[string]
-    private userName:string
 
     constructor();
     constructor(obj:any);
@@ -21,9 +19,7 @@ export default class Post extends Common{
         this.body = obj?.title 
         this.title = obj?.body
         this.userId = obj?.userId
-        this.company = obj?.company
         this.tags = obj?.tags
-        this.userName = obj?.userName
     }
 
     setId(id:ObjectId){
@@ -41,8 +37,6 @@ export default class Post extends Common{
             body:this.body,
             title:this.title,
             userId:this.userId,
-            userName:this.userName,
-            company:this.company,
             tags:this.tags ,
             slug
         }
@@ -50,6 +44,7 @@ export default class Post extends Common{
             const {insertedId} = await Collections.post.insertOne(insetObj)
             await RedisProvider.client.zadd("likes",0,insertedId)
             await RedisProvider.client.zadd("comments",0,insertedId)
+            await RedisProvider.client.zadd("views",0,insertedId)
         } catch (error) {
             throw new Error('Post create error.')
         }
@@ -71,12 +66,104 @@ export default class Post extends Common{
 
     async delete(){
         try {
-            console.log(this.userId,this._id)
             await Collections.post.deleteOne({_id:this._id,userId:this.userId})
         } catch (error) {
             console.log(error)
             throw new Error()
         }
     }
+
+    async getPost(){
+        try {
+            return await Collections.post.aggregate([
+                {
+                    $match:{
+                        _id:this._id
+                    }
+                },{
+                    $lookup:{
+                        from:"comments",
+                        let:{id:"$_id"},
+                        pipeline:[
+                            {
+                                $match:{$expr:{$eq:["$parentId","$$id"]}}
+                            },{
+                                $lookup:{
+                                        from:"users",
+                                        let:{id:"$userId"},
+                                        pipeline:[{
+                                            $match:{$expr:{$eq:["$_id","$$id"]}}
+                                        },{
+                                            $project:{userName:1,company:1,_id:0}
+                                        }],
+                                        as:"user"
+                                }
+                            },{
+                                $sort:{
+                                    createdAt:-1
+                                }
+                            }
+                        ],
+                        as:'comments'
+                    }
+                }
+                ,{
+                    $lookup:{
+                        from:"users",
+                        let:{id:"$userId"},
+                        pipeline:[{
+                            $match:{$expr:{$eq:["$_id","$$id"]}}
+                        },{
+                            $project:{userName:1,company:1,_id:0}
+                        }],
+                        as:"user"
+                    }
+                }
+            ]).toArray()
+        } catch (error) {
+            throw new Error()
+        }
+    }
+    
+    static async getAll(){
+        try {
+            const postlist = []
+            const posts =  await Collections.post.aggregate([
+                {
+                    $lookup:{
+                        from:"users",
+                        let:{id:"$userId"},
+                        pipeline:[{
+                            $match:{$expr:{$eq:["$_id","$$id"]}}
+                        },{
+                            $project:{userName:1,company:1,_id:0}
+                        }],
+                        as:"user"
+                    }
+                },{
+                    $limit:30
+                },{
+                    $sort:{
+                        createdAt:-1
+                    }
+                }
+            ]).toArray()
+            for await(let post of posts){
+                let newPost = {
+                    ...post,
+                    likes:await RedisProvider.client.zscore('likes',post._id),
+                    views:await RedisProvider.client.zscore('views',post._id),
+                    comments:await RedisProvider.client.zscore('comments',post._id)
+                }
+                postlist.push(newPost)
+            };
+            return postlist
+        } catch (error) {
+            console.log(error)
+            throw new Error()
+        }
+    }
+
+
 
 }

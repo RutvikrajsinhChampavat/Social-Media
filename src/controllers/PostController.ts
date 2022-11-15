@@ -7,15 +7,12 @@ export default class PostController{
     public async create(req:Request,res:Response){
         try {
             let userId = req.user.Id
-            let userName = req.user.UserName
-            let {title,body,company,tags} = req.body
+            let {title,body,tags} = req.body
             const obj = {
                 title,
                 body,
-                company,
                 tags,
                 userId,
-                userName
             }
             await new Post(obj).create()
             return res.reply(customResponse['POST_CREATE_SUCCESS'])
@@ -45,11 +42,23 @@ export default class PostController{
         }
     }
 
-    public async getPost(){
-
+    public async getPost(req:Request,res:Response){
+        try {
+            const {id} = req.params
+            const post =  await new Post().setId(new ObjectId(id)).getPost()
+            return res.reply(customResponse["FETCH_POST_SUCCESS"],post)
+        } catch (error) {
+            return res.reply(customResponse["FETCH_POST_ERROR"])
+        }
     }
 
     public async getPosts(req:Request,res:Response){
-        let {} = req.body
+        try {
+            const posts = await Post.getAll()
+            return res.reply(customResponse['FETCH_POSTS_SUCCESS'],posts)
+        } catch (error) {
+            console.log(error)
+            return res.reply(customResponse['FETCH_POSTS_ERROR'])         
+        }
     }
 }

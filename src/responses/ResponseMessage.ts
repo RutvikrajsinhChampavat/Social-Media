@@ -26,4 +26,13 @@ export const customResponse = {
   ['POST_EDIT_ERROR']:{ code: 500, message: "Post edit error." },
   ['POST_DELETE_SUCCESS']:{ code: 500, message: "Post deleted successfully." },
   ['POST_DELETE_ERROR']:{ code: 500, message: "Post delete error." },
+  ['FETCH_POSTS_SUCCESS']:{ code: 200, message: "Fetch posts success." },
+  ['FETCH_POSTS_ERROR']:{ code: 500, message: "Fetch posts error." },
+  ['FETCH_PROFILE_SUCCESS']:{ code: 200, message: "Fetch profile successfully." },
+  ['FETCH_PROFILE_ERROR']:{ code: 500, message: "Fetch profile error." },
+  ['COMMENT_ADD_SUCCESS']:{ code: 200, message: "Comment add successfully." },
+  ['COMMENT_ADD_ERROR']:{ code: 500, message: "Comment add error." },
+  ['FETCH_POST_SUCCESS']:{ code: 200, message: "Post fetched successfully." },
+  ['FETCH_POST_ERROR']:{ code: 500, message: "Post fetch error." },
+  ['INVALID_TOKEN']:{ code: 500, message: "Invalid token" },
 };

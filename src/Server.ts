@@ -4,12 +4,13 @@ import dotenv from "dotenv";
 import cors from "cors";
 import authRoutes from "./routes/AuthRoutes";
 import postRoutes from "./routes/PostRoutes"
+import commentRoutes from "./routes/CommentRoutes"
+import seedRoutes from "./routes/SeedRoutes"
 import { Response } from "express";
 import Database from './db/Database'
 import { customResponse } from "./responses/ResponseMessage";
 import User from "./models/User";
 import Redis from "./db/Redis";
-import { Server } from "socket.io"
 import Socket from './socket/Socket'
 
 
@@ -53,11 +54,13 @@ app.use((req,res,next)=>{
   next()
 })
 
-app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/auth",authRoutes);
 app.use("/api/v1/post",postRoutes);
+app.use("/api/v1/comment",commentRoutes);
+app.use("/api/v1",seedRoutes);
 
 app.use((err:Error,_req:any,res:any,next:NextFunction)=>{
-  console.log('erj',err)
+  err.message?res.reply({code:405,message:err.message}):
   res.reply(customResponse['SERVER_ERROR'])
 })
 
